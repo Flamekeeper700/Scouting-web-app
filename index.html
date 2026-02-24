@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Rebuilt Scouting  -  Team 6004</title>
+</head>
+<body>
+
+  <h2>FRC Match Scouting</h2>
+
+  <input id="match" type="number" placeholder="Match #" required><br><br>
+  <input id="team" type="number" placeholder="Team #" required><br><br>
+
+  <strong>Autonomous</strong><br>
+  <label><input type="checkbox" id="autoFuel"> Auto Fuel</label><br>
+  <label><input type="checkbox" id="autoClimb"> Auto Climb</label><br><br>
+
+  <strong>Robot Features</strong><br>
+  <label><input type="checkbox" id="trench"> Trench</label><br>
+  <label><input type="checkbox" id="bump"> Bump</label><br>
+  <label><input type="checkbox" id="turret"> Turret</label><br><br>
+
+  <strong>Teleop</strong><br>
+  <label><input type="checkbox" id="scoredFuel"> Scored Fuel</label><br><br>
+
+  <strong>Endgame</strong><br>
+  <label><input type="checkbox" id="l1Climb"> L1 Climb</label><br>
+  <label><input type="checkbox" id="l2Climb"> L2 Climb</label><br>
+  <label><input type="checkbox" id="l3Climb"> L3 Climb</label><br><br>
+
+  <strong>Extra</strong><br>
+  <label><input type="checkbox" id="beached"> Beached?</label><br><br>
+
+  <textarea id="notes" placeholder="Notes" rows="4" cols="30"></textarea><br><br>
+
+  <button onclick="sendData()">Send</button>
+
+  <script>
+    const URL = "PASTE_YOUR_APPS_SCRIPT_WEB_APP_URL_HERE";
+
+    function sendData() {
+      const payload = {
+        match: document.getElementById("match").value,
+        team: document.getElementById("team").value,
+
+        autoFuel: document.getElementById("autoFuel").checked,
+        autoClimb: document.getElementById("autoClimb").checked,
+
+        trench: document.getElementById("trench").checked,
+        bump: document.getElementById("bump").checked,
+        turret: document.getElementById("turret").checked,
+
+        scoredFuel: document.getElementById("scoredFuel").checked,
+
+        l1Climb: document.getElementById("l1Climb").checked,
+        l2Climb: document.getElementById("l2Climb").checked,
+        l3Climb: document.getElementById("l3Climb").checked,
+
+        beached: document.getElementById("beached").checked,
+        notes: document.getElementById("notes").value
+      };
+
+      fetch(URL, {
+        method: "POST",
+        body: JSON.stringify(payload),
+        headers: { "Content-Type": "application/json" }
+      })
+      .then(() => {
+        alert("Submitted");
+        document.querySelectorAll("input, textarea").forEach(e => {
+          if (e.type === "checkbox") e.checked = false;
+          else e.value = "";
+        });
+      })
+      .catch(() => alert("Submission failed"));
+    }
+  </script>
+
+</body>
+</html>
