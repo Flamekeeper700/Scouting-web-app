@@ -2,82 +2,65 @@
 <html>
 <head>
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Rebuilt Scouting  -  6004</title>
+  <title>FRC Scouting</title>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      max-width: 600px;
-      margin: 20px auto;
-      padding: 10px;
-    }
-    h2 {
-      text-align: center;
-    }
-    input[type="number"], textarea {
-      width: 100%;
-      padding: 8px;
-      margin: 5px 0 15px 0;
-      box-sizing: border-box;
-    }
-    label {
-      display: block;
-      margin-bottom: 5px;
-    }
-    button {
-      padding: 10px 20px;
-      font-size: 16px;
-      cursor: pointer;
-    }
+    body { font-family: Arial; max-width: 600px; margin: 20px auto; padding: 10px; }
+    input, textarea { width: 100%; padding: 8px; margin: 5px 0 15px 0; box-sizing: border-box; }
+    label { display: block; margin-bottom: 5px; }
+    button { padding: 10px 20px; font-size: 16px; cursor: pointer; }
   </style>
 </head>
 <body>
 
 <h2>FRC Match Scouting</h2>
 
-<form id="scoutForm" target="hidden_iframe" method="POST"
-      action="https://docs.google.com/forms/d/e/1FAIpQLSepQKdh1maTmAj6OmiqbNXtjIF_MMHF6l0_bPd2L93A0bQaKw/formResponse">
+<form id="scoutForm">
+  <input id="match" type="number" placeholder="Match #">
+  <input id="team" type="number" placeholder="Team #">
 
-  <!-- Match # -->
-  <input name="entry.1240212685" id="match" type="number" placeholder="Match #">
+  <strong>Team Actions</strong><br>
+  <label><input type="checkbox" class="action" value="Auto Fuel"> Auto Fuel</label>
+  <label><input type="checkbox" class="action" value="Auto Climb"> Auto Climb</label>
+  <label><input type="checkbox" class="action" value="Trench"> Trench</label>
+  <label><input type="checkbox" class="action" value="Bump"> Bump</label>
+  <label><input type="checkbox" class="action" value="Turret"> Turret</label>
+  <label><input type="checkbox" class="action" value="Scored Fuel"> Scored Fuel</label>
+  <label><input type="checkbox" class="action" value="L1 Climb"> L1 Climb</label>
+  <label><input type="checkbox" class="action" value="L2 Climb"> L2 Climb</label>
+  <label><input type="checkbox" class="action" value="L3 Climb"> L3 Climb</label>
+  <label><input type="checkbox" class="action" value="Beached?"> Beached?</label>
 
-  <!-- Team # -->
-  <input name="entry.1372696188" id="team" type="number" placeholder="Team #">
-
-  <!-- Single checkbox question for all boolean metrics -->
-  <strong>Auto</strong><br>
-  <label><input type="checkbox" name="entry.1399373670" value="Auto Fuel"> Auto Fuel</label>
-  <label><input type="checkbox" name="entry.1399373670" value="Auto Climb"> Auto Climb</label>
-
-  <strong>Mobility</strong><br>
-  <label><input type="checkbox" name="entry.1399373670" value="Trench"> Trench</label>
-  <label><input type="checkbox" name="entry.1399373670" value="Bump"> Bump</label>
-
-  <strong>Robot Attributes</strong><br>
-  <label><input type="checkbox" name="entry.1399373670" value="Turret"> Turret</label>
-
-  <strong>Teleop</strong><br>
-  <label><input type="checkbox" name="entry.1399373670" value="Scored Fuel"> Scored Fuel</label>
-  <label><input type="checkbox" name="entry.1399373670" value="L1 Climb"> L1 Climb</label>
-  <label><input type="checkbox" name="entry.1399373670" value="L2 Climb"> L2 Climb</label>
-  <label><input type="checkbox" name="entry.1399373670" value="L3 Climb"> L3 Climb</label>
-
-  <strong>Extra</strong><br>
-  <label><input type="checkbox" name="entry.1399373670" value="Beached?"> Beached?</label>
-
-  <!-- Notes -->
-  <textarea name="entry.777185259" id="notes" placeholder="Notes" rows="4"></textarea>
-
+  <textarea id="notes" placeholder="Notes" rows="4"></textarea>
   <button type="button" onclick="submitForm()">Send</button>
 </form>
 
-<!-- hidden iframe to submit silently -->
-<iframe name="hidden_iframe" style="display:none;"></iframe>
-
 <script>
+const webAppURL = "https://script.google.com/macros/s/AKfycbxkxIwU02qWNWlJsn5Hp3aDTcENfZPkU-BCUvE2dCY2r4aC2Res7gIcu0co4BWXuLNN/exec"; // replace with your Apps Script URL
+
 function submitForm() {
-  document.getElementById("scoutForm").submit();
-  alert("Submitted!");
-  document.getElementById("scoutForm").reset();
+  const match = document.getElementById("match").value;
+  const team = document.getElementById("team").value;
+  const notes = document.getElementById("notes").value;
+  const actions = Array.from(document.querySelectorAll(".action:checked")).map(c => c.value).join(", ");
+
+  fetch(webAppURL, {
+    method: "POST",
+    body: new URLSearchParams({
+      match: match,
+      team: team,
+      actions: actions,
+      notes: notes
+    })
+  })
+  .then(r => r.json())
+  .then(data => {
+    alert("Submitted successfully!");
+    document.getElementById("scoutForm").reset();
+  })
+  .catch(err => {
+    console.error(err);
+    alert("Submission failed. Check console for details.");
+  });
 }
 </script>
 
